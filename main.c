@@ -61,7 +61,7 @@ int main()
 
     return 0;
 
-} // Fim main
+} // Fim main()
 
 // Função para cadastrar aluno
 void cadastrarAluno()
@@ -72,20 +72,21 @@ void cadastrarAluno()
         return;
     } // Fim if
 
-   // Limpar o buffer de entrada antes de ler o nome
-    while (getchar() != '\n');
+    // Limpar o buffer de entrada antes de ler o nome
+    while (getchar() != '\n')
+        ;
 
     // Ler nome completo (com espaços)
     printf("\nNome: ");
     fgets(alunos[totalAlunos].nome, 50, stdin);
-    
+
     // Remover a quebra de linha (\n) que o fgets captura
     alunos[totalAlunos].nome[strcspn(alunos[totalAlunos].nome, "\n")] = '\0';
 
     // Ler matricula
     printf("Matricula: ");
     scanf("%i", &alunos[totalAlunos].matricula);
-    
+
     // Ler nota
     printf("Nota: ");
     scanf("%f", &alunos[totalAlunos].nota);
@@ -107,10 +108,10 @@ void listarAluno()
     printf("\n--- Lista Alunos---\n");
     for (int i = 0; i < totalAlunos; i++)
     {
-        printf(" %d. %s | Matricula: %i | Nota: %f\n", i + 1, alunos[i].nome, alunos[i].matricula, alunos[i].nota);
+        printf(" %i. %s | Matricula: %i | Nota: %.2f\n", i + 1, alunos[i].nome, alunos[i].matricula, alunos[i].nota);
 
     } // Fim for(i)
-} // Fim aluno
+} // Fim aluno()
 
 // Função para animação terminal
 void sairComAnimacao()
@@ -126,7 +127,7 @@ void sairComAnimacao()
     }
 
     printf("\n");
-} // Fim sairComAnimação
+} // Fim sairComAnimação()
 
 // Função para salvar dados
 void salvarDados()
@@ -140,15 +141,16 @@ void salvarDados()
 
     for (int i = 0; i < totalAlunos; i++)
     {
-        fprintf(arquivo, "%s;%d;%.2f\n", alunos[i].nome, alunos[i].matricula, alunos[i].nota);
+        fprintf(arquivo, "%s|%i|%.2f\n", alunos[i].nome, alunos[i].matricula, alunos[i].nota);
     } // Fim for(i)
 
     fclose(arquivo);
     printf("Dados salvos em dadosAlunos.txt com sucesso! ");
 
-} // Fim salvarDados
+} // Fim salvarDados()
 
-// Função para carregar dados
+#include <stdlib.h> // Adicione esta linha no início para atoi() e atof()
+
 void carregarDados()
 {
     FILE *arquivo = fopen("dadosAlunos.txt", "r");
@@ -156,14 +158,39 @@ void carregarDados()
     {
         printf("\nArquivo de dados não encontrado. Iniciando com lista vazia.\n");
         return;
-    } // Fim if
+    }
 
-    while (fscanf(arquivo, "%s, %d,%f", alunos[totalAlunos].nome, alunos[totalAlunos].matricula, alunos[totalAlunos].nota) == 3)
+    totalAlunos = 0;
+    char linha[150]; // Buffer para cada linha do arquivo
+
+    while (totalAlunos < MAX_ALUNOS && fgets(linha, sizeof(linha), arquivo))
     {
+        // Remove a quebra de linha no final
+        linha[strcspn(linha, "\n")] = '\0';
+
+        char *token = strtok(linha, "|");
+        if (!token)
+            continue;
+
+        // Copia o nome (com segurança)
+        strncpy(alunos[totalAlunos].nome, token, 49);
+        alunos[totalAlunos].nome[49] = '\0';
+
+        // Lê matrícula
+        token = strtok(NULL, "|");
+        if (!token)
+            continue;
+        alunos[totalAlunos].matricula = atoi(token);
+
+        // Lê nota
+        token = strtok(NULL, "|");
+        if (!token)
+            continue;
+        alunos[totalAlunos].nota = atof(token);
+
         totalAlunos++;
     } // Fim while
 
     fclose(arquivo);
-    printf("Dados carregados ded dadosAlunos.txt com sucesso!");
-
-} // Fim carregarDados
+    printf("\nDados carregados com sucesso! (%d alunos)\n", totalAlunos);
+} // Fim carregarDados()s
