@@ -4,7 +4,20 @@
 
 #define MAX_ALUNOS 100
 
-void cadastratAluno();
+// Struct para definir oque será pedido do aluno
+typedef struct
+{
+    char nome[50];
+    int matricula;
+    float nota;
+} Aluno;
+
+// Vetor para controle de alunos cadastrados
+Aluno alunos[MAX_ALUNOS];
+int totalAlunos = 0;
+
+// Declaração das funções
+void cadastrarAluno();
 void listarAluno();
 void sairComAnimacao();
 void salvarDados();
@@ -13,16 +26,16 @@ void carregarDados();
 int main()
 {
     // Chamar funcao carregarDados
-    carregarDados(); // Gera arquivo dadosAlunos.txt
+    carregarDados(); // Carrega dados do arquivo
     int opcao;
 
     do
     {
-        printf("--- Sistema Aluno ---");
-        printf(" 1. Cadastrar aluno ");
-        printf(" 2. Listar aluno ");
-        printf(" 0. Sair");
-        printf(" Escolha uma opcao ");
+        printf("\n--- Sistema Aluno ---\n");
+        printf(" 1. Cadastrar aluno\n ");
+        printf(" 2. Listar aluno\n ");
+        printf(" 0. Sair\n");
+        printf(" Escolha uma opcao: ");
         scanf("%i", &opcao);
 
         switch (opcao)
@@ -37,8 +50,8 @@ int main()
             break;
         case 0:
             // Chamar função sairComAnimacao e salvarDados
+            salvarDados(); // Salvar antes de sair
             sairComAnimacao();
-            salvarDados();
             break;
         default:
             printf("Opcao invalida ");
@@ -50,41 +63,29 @@ int main()
 
 } // Fim main
 
-// Struct para definir oque será pedido do aluno
-typedef struct
-{
-    char nome[50];
-    int matricula;
-    float nota;
-} Aluno;
-
-// Vetor para controle de alunos cadastrados
-Aluno alunos[MAX_ALUNOS];
-int totalAlunos = 0;
-
 // Função para cadastrar aluno
 void cadastrarAluno()
 {
     if (totalAlunos >= MAX_ALUNOS)
     {
-        printf("\n Total de alunos atingido! ");
+        printf("\nTotal de alunos atingido!\n");
         return;
     } // Fim if
 
     // Ler nome
     printf("Nome: ");
-    scanf("% c", alunos[totalAlunos].nome);
+    scanf("%49s", alunos[totalAlunos].nome); // Limita a 49 caracteres
 
     // Ler matricula
     printf("Matricula: ");
-    scanf("% c", alunos[totalAlunos].matricula);
+    scanf("%i", &alunos[totalAlunos].matricula);
     // Ler nota
     printf("Nota: ");
-    scanf("% c", alunos[totalAlunos].nota);
+    scanf("%f", &alunos[totalAlunos].nota);
 
     totalAlunos++;
 
-    printf("Aluno cadastrado com sucesso");
+    printf("\nAluno cadastrado com sucesso!\n");
 
 } // Fim cadastratAluno
 
@@ -93,14 +94,14 @@ void listarAluno()
 {
     if (totalAlunos == 0)
     {
-        printf("Nenhum aluno cadastrado");
+        printf("\nNenhum aluno cadastrado!\n");
         return;
     } // Fim if
 
-    printf("--- Lista Alunos---");
+    printf("\n--- Lista Alunos---\n");
     for (int i = 0; i < totalAlunos; i++)
     {
-        printf(" %s | Matricula: %i | Nota: %f ", i + 1, alunos[i].nome, alunos[i].matricula, alunos[i].nota);
+        printf(" %d. %s | Matricula: %i | Nota: %f\n", i + 1, alunos[i].nome, alunos[i].matricula, alunos[i].nota);
 
     } // Fim for(i)
 } // Fim aluno
@@ -108,7 +109,7 @@ void listarAluno()
 // Função para animação terminal
 void sairComAnimacao()
 {
-    printf("Saindo");
+    printf("\nSaindo");
     fflush(stdout); // força imprimir antes do sleep
 
     for (int i = 0; i < 3; i++)
@@ -124,10 +125,10 @@ void sairComAnimacao()
 // Função para salvar dados
 void salvarDados()
 {
-    FILE *arquivo = fopen("dadosAlunos.txt", 'w');
+    FILE *arquivo = fopen("dadosAlunos.txt", "w");
     if (arquivo == NULL)
     {
-        printf("Erro ao abrir arquivo");
+        printf("\nErro ao abrir arquivo!\n");
         return;
     } // Fim if
 
@@ -147,10 +148,11 @@ void carregarDados()
     FILE *arquivo = fopen("dadosAlunos.txt", "r");
     if (arquivo == NULL)
     {
+        printf("\nArquivo de dados não encontrado. Iniciando com lista vazia.\n");
         return;
     } // Fim if
 
-    while (fscanf(arquivo, "% c, %d,%f", alunos[totalAlunos].nome, alunos[totalAlunos].matricula, alunos[totalAlunos].nota) == 3)
+    while (fscanf(arquivo, "%s, %d,%f", alunos[totalAlunos].nome, alunos[totalAlunos].matricula, alunos[totalAlunos].nota) == 3)
     {
         totalAlunos++;
     } // Fim while
