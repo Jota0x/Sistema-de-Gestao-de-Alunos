@@ -32,7 +32,7 @@ int main()
     do
     {
         printf("\n--- Sistema Aluno ---\n");
-        printf(" 1. Cadastrar aluno\n ");
+        printf("  1. Cadastrar aluno\n ");
         printf(" 2. Listar aluno\n ");
         printf(" 0. Sair\n");
         printf(" Escolha uma opcao: ");
@@ -72,19 +72,25 @@ void cadastrarAluno()
         return;
     } // Fim if
 
-    // Ler nome
-    printf("Nome: ");
-    scanf("%49s", alunos[totalAlunos].nome); // Limita a 49 caracteres
+   // Limpar o buffer de entrada antes de ler o nome
+    while (getchar() != '\n');
+
+    // Ler nome completo (com espaços)
+    printf("\nNome: ");
+    fgets(alunos[totalAlunos].nome, 50, stdin);
+    
+    // Remover a quebra de linha (\n) que o fgets captura
+    alunos[totalAlunos].nome[strcspn(alunos[totalAlunos].nome, "\n")] = '\0';
 
     // Ler matricula
     printf("Matricula: ");
     scanf("%i", &alunos[totalAlunos].matricula);
+    
     // Ler nota
     printf("Nota: ");
     scanf("%f", &alunos[totalAlunos].nota);
 
     totalAlunos++;
-
     printf("\nAluno cadastrado com sucesso!\n");
 
 } // Fim cadastratAluno
